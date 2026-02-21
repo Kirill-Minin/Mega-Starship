@@ -18,6 +18,15 @@ The fastest way to understand BMad is to try it.
 Install BMad and run `/bmad-help` — it will guide you through everything based on your project and installed modules.
 :::
 
+## Program Engineering Blueprint
+
+Building a complex system like an ERP? Start here:
+
+- **[Program Engineering Blueprint](./blueprint/README.md)** — Strategic architecture and roadmap for the Iowa Trail Rides multi-tenant ERP
+- **[C4 Architecture Diagrams](./blueprint/C4-DIAGRAMS.md)** — Context, Container, and Component-level views of the system
+- **[Event Contracts](./contracts/)** — JSON Schema definitions for domain events
+- **[Service Architecture](./architecture/iowa-crm-architecture.mmd)** — 7-pillar architecture overview
+
 ## How to Use These Docs
 
 These docs are organized into four sections based on what you're trying to do:
@@ -53,4 +62,4 @@ Get help, share what you're building, or contribute to BMad:
 
 ## Next Step
 
-Ready to dive in? **[Get Started with BMad](./tutorials/getting-started.md)** and build your first project.
+Ready to dive in? **[Get Started with BMad](./tutorials/getting-started.md)** and build your first project, or explore the **[Program Engineering Blueprint](./blueprint/README.md)** for detailed architecture planning.

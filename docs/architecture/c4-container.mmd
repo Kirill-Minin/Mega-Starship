@@ -1,0 +1,114 @@
+%% C4 Container Diagram — Iowa Trail Rides ERP
+%% Shows the main containers (services, databases, external systems)
+
+graph TB
+    subgraph Client["Client Applications"]
+        Web["Web UI<br/>(React + Vite)"]
+        Mobile["Mobile App<br/>(React Native)"]
+        API_Webhooks["3rd-party Webhooks"]
+    end
+    
+    subgraph Infrastructure["Azure Infrastructure &amp; Security"]
+        AppGateway["Application Gateway<br/>(WAF, SSL/TLS)"]
+        KeyVault["Azure Key Vault<br/>(Secrets, Certs)"]
+        EntraID["Microsoft Entra ID<br/>(OAuth2/OIDC)"]
+    end
+    
+    subgraph Platform["Microservices Platform"]
+        APIGateway["API Gateway<br/>(Kong/NGINX)"]
+        AuthService["Auth Service<br/>(JWT validation)"]
+        ContactsService["Contacts Service<br/>(Node/Prisma)"]
+        BookingsService["Bookings Service<br/>(Node/Prisma + Outbox)"]
+        ToursService["Tours Service<br/>(Node/Prisma)"]
+        OperatorsService["Operators Service<br/>(Node/Prisma)"]
+        MarketingService["Marketing Service<br/>(Node/Prisma)"]
+        ReportsService["Reports Service<br/>(Analytics)"]
+        AIService["AI/Intelligence Service<br/>(Python/ML)"]
+    end
+    
+    subgraph Data["Data & Storage Layer"]
+        PostgresCluster["PostgreSQL Cluster<br/>(Flexible Server)"]
+        EventHub["Event Hubs / Kafka<br/>(Event Streaming)"]
+        SchemaRegistry["Schema Registry<br/>(Event Contracts)"]
+        OLAPDb["ClickHouse / DW<br/>(Analytics)"]
+        BlobStorage["Azure Blob Storage<br/>(Documents, Media)"]
+        Redis["Azure Cache for Redis<br/>(Sessions, Cache)"]
+    end
+    
+    subgraph Observability["Monitoring &amp; Logging"]
+        LogAnalytics["Log Analytics<br/>(ELK/OpenSearch)"]
+        Prometheus["Prometheus<br/>(Metrics)"]
+        Grafana["Grafana<br/>(Dashboards)"]
+        Jaeger["Jaeger<br/>(Distributed Tracing)"]
+    end
+    
+    subgraph CI_CD["CI/CD &amp; Deployment"]
+        GitHub["GitHub<br/>(Repository)"]
+        Actions["GitHub Actions<br/>(CI/CD)"]
+        ACR["Azure Container Registry<br/>(Images)"]
+        AKS["Azure Kubernetes Service<br/>(Orchestration)"]
+    end
+    
+    %% Client flows
+    Web --> AppGateway
+    Mobile --> AppGateway
+    API_Webhooks --> AppGateway
+    
+    %% Gateway flows
+    AppGateway --> EntraID
+    AppGateway --> KeyVault
+    AppGateway --> APIGateway
+    
+    %% API Gateway to services
+    APIGateway --> AuthService
+    APIGateway --> ContactsService
+    APIGateway --> BookingsService
+    APIGateway --> ToursService
+    APIGateway --> OperatorsService
+    APIGateway --> MarketingService
+    APIGateway --> ReportsService
+    APIGateway --> AIService
+    
+    %% Services to data layer
+    ContactsService --> PostgresCluster
+    BookingsService --> PostgresCluster
+    BookingsService --> EventHub
+    ToursService --> PostgresCluster
+    ToursService --> EventHub
+    OperatorsService --> PostgresCluster
+    MarketingService --> PostgresCluster
+    MarketingService --> EventHub
+    ReportsService --> PostgresCluster
+    ReportsService --> OLAPDb
+    ReportsService --> EventHub
+    AIService --> EventHub
+    AIService --> OLAPDb
+    
+    %% Event Hub
+    EventHub --> SchemaRegistry
+    EventHub --> OLAPDb
+    
+    %% Storage
+    ContactsService --> BlobStorage
+    MarketingService --> BlobStorage
+    BookingsService --> Redis
+    ToursService --> Redis
+    
+    %% Observability connections
+    Platform -.->|Metrics/Logs| LogAnalytics
+    Platform -.->|Metrics| Prometheus
+    Data -.->|Logs| LogAnalytics
+    Platform -.->|Traces| Jaeger
+    Prometheus --> Grafana
+    
+    %% CI/CD
+    GitHub --> Actions
+    Actions --> ACR
+    Actions --> AKS
+    
+    style Client fill:#e0f2fe,stroke:#0284c7,color:#000
+    style Infrastructure fill:#fef08a,stroke:#ca8a04,color:#000
+    style Platform fill:#e8f5e9,stroke:#388e3c,color:#000
+    style Data fill:#f3e8ff,stroke:#7c3aed,color:#000
+    style Observability fill:#fce7f3,stroke:#be185d,color:#000
+    style CI_CD fill:#fed7aa,stroke:#ea580c,color:#000

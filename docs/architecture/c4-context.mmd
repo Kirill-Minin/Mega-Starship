@@ -1,0 +1,40 @@
+%% C4 Context Diagram — Iowa Trail Rides ERP
+%% Shows the system in context of users and external systems
+
+graph TB
+    subgraph System["Iowa Trail Rides ERP"]
+        ERP["<b>All Events Decisions (AED)</b><br/>Multi-tenant CRM & ERP Platform"]
+    end
+    
+    Customer["👤 Tour Customer"]
+    Operator["👤 Tour Operator"]
+    Admin["👤 Finance/Admin Staff"]
+    Marketing["👤 Marketing Manager"]
+    
+    ExtEmail["📧 Email Service<br/>(SendGrid/Azure)"]
+    ExtSMS["📱 SMS Service<br/>(Twilio/Azure)"]
+    ExtPayment["💳 Payment Gateway<br/>(Stripe/Square)"]
+    ExtAnalytics["📊 Analytics<br/>(Google Analytics)"]
+    ExtAD["🔐 Microsoft Entra ID<br/>(Azure AD)"]
+    
+    Customer -->|Browse tours, Book| ERP
+    Operator -->|Manage tours, Availability| ERP
+    Admin -->|Reports, Settlements, Settings| ERP
+    Marketing -->|Create campaigns, View metrics| ERP
+    
+    ERP -->|Send emails| ExtEmail
+    ERP -->|Send SMS confirmations| ExtSMS
+    ERP -->|Process payments| ExtPayment
+    ERP -->|Track user behavior| ExtAnalytics
+    ERP -->|Authenticate users| ExtAD
+    
+    style ERP fill:#0ea5e9,stroke:#0284c7,color:#fff
+    style Customer fill:#e0f2fe,stroke:#0284c7
+    style Operator fill:#e0f2fe,stroke:#0284c7
+    style Admin fill:#e0f2fe,stroke:#0284c7
+    style Marketing fill:#e0f2fe,stroke:#0284c7
+    style ExtEmail fill:#f3e8ff,stroke:#7c3aed
+    style ExtSMS fill:#f3e8ff,stroke:#7c3aed
+    style ExtPayment fill:#f3e8ff,stroke:#7c3aed
+    style ExtAnalytics fill:#f3e8ff,stroke:#7c3aed
+    style ExtAD fill:#fef08a,stroke:#ca8a04

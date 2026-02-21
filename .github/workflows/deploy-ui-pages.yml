@@ -7,10 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -20,24 +18,23 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install deps and build UI
+      - name: Install dependencies
+        working-directory: services/ui
+        run: npm ci
+
+      - name: Build UI
         working-directory: services/ui
         env:
           VITE_ENTRA_CLIENT_ID: ${{ secrets.VITE_ENTRA_CLIENT_ID }}
           VITE_ENTRA_TENANT_ID: ${{ secrets.VITE_ENTRA_TENANT_ID }}
           VITE_REDIRECT_URI: ${{ secrets.VITE_REDIRECT_URI }}
-        run: |
-          npm ci
-          npm run build
+        run: npm run build
 
-      - name: Upload artifact for GitHub Pages
-        uses: actions/upload-pages-artifact@v1
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          path: services/ui/dist
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./services/ui/dist
+          publish_branch: gh-pages
+          keep_files: true
 
-  deploy-pages:
-    needs: build-deploy
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v1

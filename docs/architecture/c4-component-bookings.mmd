@@ -1,0 +1,49 @@
+%% C4 Component Diagram — Bookings Service
+%% Shows internal architecture of the bookings microservice with transactional outbox pattern
+
+graph TB
+    Client["API Client<br/>(UI / Mobile)"]
+    
+    subgraph BookingsService["Bookings Service (Node.js + Prisma)"]
+        HTTPController["HTTP Controller<br/>(Express routes)"]
+        BookingHandler["Booking Handler<br/>(Business logic)"]
+        OutboxWriter["Outbox Writer"]
+        AvailabilityCheck["Availability Checker<br/>(call Tours Service)"]
+        
+        subgraph DB["Local Database (PostgreSQL)"]
+            BookingTable["booking table<br/>(id, tenant_id, customer_id..."]
+            OutboxTable["outbox table<br/>(event_type, payload, processed)"]
+        end
+        
+        OutboxPublisher["Outbox Publisher<br/>(background process)"]
+        KafkaProducer["Kafka Producer"]
+    end
+    
+    EventHub["Event Hub / Kafka<br/>(Event Bus)"]
+    ToursService["Tours Service<br/>(for availability check)"]
+    
+    Client -->|POST /bookings| HTTPController
+    HTTPController --> BookingHandler
+    BookingHandler --> AvailabilityCheck
+    AvailabilityCheck -->|Check availability| ToursService
+    BookingHandler --> OutboxWriter
+    OutboxWriter -->|In transaction| BookingTable
+    OutboxWriter -->|In transaction| OutboxTable
+    
+    OutboxPublisher -->|Poll outbox| OutboxTable
+    OutboxPublisher -->|Mark processed| OutboxTable
+    OutboxPublisher --> KafkaProducer
+    KafkaProducer -->|Publish BookingCreated event| EventHub
+    
+    style Client fill:#e0f2fe,stroke:#0284c7
+    style HTTPController fill:#dbeafe,stroke:#0284c7
+    style BookingHandler fill:#dbeafe,stroke:#0284c7
+    style OutboxWriter fill:#dbeafe,stroke:#0284c7
+    style AvailabilityCheck fill:#dbeafe,stroke:#0284c7
+    style DB fill:#e8f5e9,stroke:#388e3c
+    style BookingTable fill:#c6f6d5,stroke:#22863a
+    style OutboxTable fill:#c6f6d5,stroke:#22863a
+    style OutboxPublisher fill:#fef08a,stroke:#ca8a04
+    style KafkaProducer fill:#fef08a,stroke:#ca8a04
+    style EventHub fill:#f3e8ff,stroke:#7c3aed
+    style ToursService fill:#dbeafe,stroke:#0284c7

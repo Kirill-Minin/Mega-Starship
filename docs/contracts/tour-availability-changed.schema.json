@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TourAvailabilityChanged",
+  "type": "object",
+  "properties": {
+    "eventType": { "const": "TourAvailabilityChanged" },
+    "eventId": { "type": "string" },
+    "schemaVersion": { "type": "string" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string" },
+    "tourId": { "type": "string" },
+    "availableSeats": { "type": "integer" },
+    "timeWindow": { "type": "object" }
+  },
+  "required": ["eventType","eventId","occurredAt","tenantId","tourId","availableSeats"]
+}

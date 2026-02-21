@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Booking {
+  id         String   @id @default(uuid())
+  tenantId   String
+  customerId String
+  tourId     String
+  status     String
+  seats      Int
+  price      Float?
+  bookingDate DateTime
+  createdAt  DateTime @default(now())
+}
+
+model Outbox {
+  id        String   @id @default(uuid())
+  eventType String
+  payload   String   @db.Text
+  processed Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

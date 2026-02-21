@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "BookingCreated",
+  "type": "object",
+  "properties": {
+    "eventType": { "const": "BookingCreated" },
+    "eventId": { "type": "string" },
+    "schemaVersion": { "type": "string" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "tenantId": { "type": "string" },
+    "booking": {
+      "type": "object",
+      "properties": {
+        "bookingId": { "type": "string" },
+        "customerId": { "type": "string" },
+        "tourId": { "type": "string" },
+        "status": { "type": "string" },
+        "seats": { "type": "integer" },
+        "price": { "type": "number" },
+        "bookingDate": { "type": "string", "format": "date" }
+      },
+      "required": ["bookingId","customerId","tourId","status","bookingDate"]
+    }
+  },
+  "required": ["eventType","eventId","occurredAt","tenantId","booking"]
+}

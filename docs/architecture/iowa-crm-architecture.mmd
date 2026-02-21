@@ -1,0 +1,45 @@
+%% Mermaid architecture diagram for Iowa Trail Rides CRM
+flowchart TD
+  classDef standard fill:#e0f2fe,stroke:#0288d1,stroke-width:2px,color:#000
+  classDef bus fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000
+  classDef db fill:#e8f5e9,stroke:#388e3c,stroke-width:2px,color:#000
+  classDef infra fill:#f3f4f6,stroke:#9ca3af,stroke-width:2px,color:#000
+
+  UI["Client Interfaces\n(Web SPA / Mobile / Webhooks)"]
+  Gateway["API Gateway / Auth (Entra ID)"]
+  Contacts["Contacts Service"]
+  Bookings["Bookings Service"]
+  Tours["Tours Service"]
+  Marketing["Marketing Service"]
+  Reports["Reports / Read Models"]
+  AI["AI / Intelligence Layer"]
+  Bus{{"Event Bus (Event Hubs / Kafka)"}}
+  Storage[("Postgres / OLAP / Blob Storage")]
+  Infra["AKS / ACR / KeyVault / Observability"]
+
+  UI --> Gateway
+  Gateway --> Contacts
+  Gateway --> Bookings
+  Gateway --> Tours
+  Gateway --> Marketing
+
+  Contacts <--> Bus
+  Bookings <--> Bus
+  Tours <--> Bus
+  Marketing <--> Bus
+  AI <--> Bus
+
+  Contacts --> Storage
+  Bookings --> Storage
+  Tours --> Storage
+  Marketing --> Storage
+  Reports --> Storage
+
+  Infra -.-> Gateway
+  Infra -.-> Bookings
+  Infra -.-> Storage
+
+  class UI,Gateway,Contacts,Bookings,Tours,Marketing,Reports,AI standard
+  class Bus bus
+  class Storage db
+  class Infra infra
